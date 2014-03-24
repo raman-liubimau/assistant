@@ -1,8 +1,256 @@
-object Form1: TForm1
-  Left = 232
-  Height = 240
-  Top = 143
-  Width = 320
-  Caption = 'Form1'
+object MainForm: TMainForm
+  Left = 605
+  Height = 348
+  Top = 150
+  Width = 220
+  BorderIcons = [biSystemMenu, biMinimize]
+  BorderStyle = bsSingle
+  Caption = 'Assistant'
+  ClientHeight = 348
+  ClientWidth = 220
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   LCLVersion = '1.2.0.3'
+  object HeatSettings: TGroupBox
+    Left = 0
+    Height = 104
+    Top = 0
+    Width = 220
+    Align = alTop
+    Caption = 'Плавка'
+    ClientHeight = 75
+    ClientWidth = 214
+    TabOrder = 0
+    object Label1: TLabel
+      Left = 13
+      Height = 15
+      Top = 12
+      Width = 104
+      Caption = 'Масса заготовки:'
+      ParentColor = False
+    end
+    object Label2: TLabel
+      Left = 13
+      Height = 15
+      Top = 36
+      Width = 109
+      Caption = 'Кол-во заготовок:'
+      ParentColor = False
+    end
+    object Label3: TLabel
+      Left = 13
+      Height = 15
+      Top = 60
+      Width = 87
+      Caption = 'Масса плавки:'
+      ParentColor = False
+    end
+    object BarWeight: TEdit
+      Left = 141
+      Height = 23
+      Top = 4
+      Width = 64
+      MaxLength = 4
+      OnChange = BarWeightChange
+      TabOrder = 0
+    end
+    object BarCount: TEdit
+      Left = 141
+      Height = 23
+      Top = 28
+      Width = 64
+      MaxLength = 3
+      OnChange = BarCountChange
+      TabOrder = 1
+    end
+    object HeatWeight: TEdit
+      Left = 141
+      Height = 23
+      Top = 52
+      Width = 64
+      MaxLength = 6
+      TabOrder = 2
+    end
+  end
+  object MetalSettings: TGroupBox
+    Left = 0
+    Height = 138
+    Top = 104
+    Width = 220
+    Align = alClient
+    Caption = 'Прокат'
+    ClientHeight = 109
+    ClientWidth = 214
+    TabOrder = 1
+    object Label4: TLabel
+      Left = 13
+      Height = 15
+      Top = 12
+      Width = 11
+      Caption = '1.'
+      ParentColor = False
+    end
+    object Label5: TLabel
+      Left = 13
+      Height = 15
+      Top = 36
+      Width = 11
+      Caption = '2.'
+      ParentColor = False
+    end
+    object Label6: TLabel
+      Left = 13
+      Height = 15
+      Top = 60
+      Width = 11
+      Caption = '3.'
+      ParentColor = False
+    end
+    object Label7: TLabel
+      Left = 125
+      Height = 15
+      Top = 12
+      Width = 11
+      Caption = '4.'
+      ParentColor = False
+    end
+    object Label8: TLabel
+      Left = 125
+      Height = 15
+      Top = 36
+      Width = 11
+      Caption = '5.'
+      ParentColor = False
+    end
+    object MetalWeight1: TEdit
+      Left = 29
+      Height = 23
+      Top = 4
+      Width = 64
+      MaxLength = 6
+      OnChange = MetalWeight1Change
+      TabOrder = 0
+    end
+    object MetalWeight2: TEdit
+      Left = 29
+      Height = 23
+      Top = 28
+      Width = 64
+      MaxLength = 6
+      OnChange = MetalWeight2Change
+      TabOrder = 1
+    end
+    object MetalWeight3: TEdit
+      Left = 29
+      Height = 23
+      Top = 52
+      Width = 64
+      MaxLength = 6
+      OnChange = MetalWeight3Change
+      TabOrder = 2
+    end
+    object MetalWeight4: TEdit
+      Left = 141
+      Height = 23
+      Top = 4
+      Width = 64
+      MaxLength = 6
+      OnChange = MetalWeight4Change
+      TabOrder = 3
+    end
+    object MetalWeight5: TEdit
+      Left = 141
+      Height = 23
+      Top = 28
+      Width = 64
+      MaxLength = 6
+      OnChange = MetalWeight5Change
+      TabOrder = 4
+    end
+    object ResetWeight: TButton
+      Left = 125
+      Height = 23
+      Top = 52
+      Width = 80
+      Caption = 'Сброс'
+      OnClick = ResetWeightClick
+      TabOrder = 5
+    end
+    object Label9: TLabel
+      Left = 13
+      Height = 15
+      Top = 92
+      Width = 85
+      Caption = 'Общая масса:'
+      ParentColor = False
+    end
+    object MetalWeight: TEdit
+      Left = 141
+      Height = 23
+      Top = 84
+      Width = 64
+      ReadOnly = True
+      TabOrder = 6
+    end
+  end
+  object FlowRateSettings: TGroupBox
+    Left = 0
+    Height = 106
+    Top = 242
+    Width = 220
+    Align = alBottom
+    Caption = 'Коэф. расхода'
+    ClientHeight = 77
+    ClientWidth = 214
+    TabOrder = 2
+    object NormalFlowRate: TEdit
+      Left = 141
+      Height = 23
+      Top = 3
+      Width = 64
+      MaxLength = 5
+      OnChange = NormalFlowRateChange
+      TabOrder = 0
+    end
+    object ActualFlowRate: TEdit
+      Left = 141
+      Height = 23
+      Top = 28
+      Width = 64
+      ReadOnly = True
+      TabOrder = 1
+    end
+    object Deficit: TEdit
+      Left = 141
+      Height = 23
+      Top = 52
+      Width = 64
+      ReadOnly = True
+      TabOrder = 2
+    end
+    object Label10: TLabel
+      Left = 13
+      Height = 15
+      Top = 11
+      Width = 85
+      Caption = 'Нормальный:'
+      ParentColor = False
+    end
+    object Label11: TLabel
+      Left = 13
+      Height = 15
+      Top = 36
+      Width = 83
+      Caption = 'Фактический:'
+      ParentColor = False
+    end
+    object Label12: TLabel
+      Left = 13
+      Height = 15
+      Top = 60
+      Width = 57
+      Caption = 'Дефицит:'
+      ParentColor = False
+    end
+  end
 end

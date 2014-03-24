@@ -3,7 +3,7 @@
   <ProjectSession>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="4">
+    <Units Count="8">
       <Unit0>
         <Filename Value="Assistant.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -13,13 +13,13 @@
       <Unit1>
         <Filename Value="AppForm.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="Form1"/>
+        <ComponentName Value="MainForm"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="AppForm"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
+        <TopLine Value="154"/>
+        <CursorPos X="1" Y="194"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -28,10 +28,11 @@
         <Filename Value="AppCore.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="AppCore"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
+        <TopLine Value="245"/>
+        <CursorPos X="26" Y="290"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit2>
@@ -41,16 +42,121 @@
         <UnitName Value="AppLogic"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
+        <TopLine Value="160"/>
+        <CursorPos X="29" Y="194"/>
         <UsageCount Value="20"/>
         <Loaded Value="True"/>
       </Unit3>
+      <Unit4>
+        <Filename Value="/usr/lib/lazarus/lcl/include/control.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="2075"/>
+        <CursorPos X="1" Y="2100"/>
+        <UsageCount Value="10"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="/usr/lib/lazarus/lcl/include/customedit.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="502"/>
+        <CursorPos X="1" Y="522"/>
+        <UsageCount Value="10"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="/usr/lib/lazarus/lcl/include/wincontrol.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="5303"/>
+        <CursorPos X="1" Y="5328"/>
+        <UsageCount Value="10"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="/usr/lib/lazarus/lcl/interfaces/qt/qtwidgets.pas"/>
+        <UnitName Value="qtwidgets"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="8437"/>
+        <CursorPos X="1" Y="8463"/>
+        <UsageCount Value="10"/>
+      </Unit7>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="0" HistoryIndex="-1"/>
+    <JumpHistory Count="16" HistoryIndex="15">
+      <Position1>
+        <Filename Value="AppForm.pas"/>
+        <Caret Line="145" Column="16" TopLine="97"/>
+      </Position1>
+      <Position2>
+        <Filename Value="AppForm.pas"/>
+        <Caret Line="151" Column="16" TopLine="103"/>
+      </Position2>
+      <Position3>
+        <Filename Value="AppForm.pas"/>
+        <Caret Line="157" Column="16" TopLine="109"/>
+      </Position3>
+      <Position4>
+        <Filename Value="AppForm.pas"/>
+        <Caret Line="146" Column="24" TopLine="115"/>
+      </Position4>
+      <Position5>
+        <Filename Value="AppLogic.pas"/>
+        <Caret Line="152" Column="29" TopLine="107"/>
+      </Position5>
+      <Position6>
+        <Filename Value="AppForm.pas"/>
+        <Caret Line="140" Column="36" TopLine="100"/>
+      </Position6>
+      <Position7>
+        <Filename Value="AppLogic.pas"/>
+        <Caret Line="210" Column="20" TopLine="162"/>
+      </Position7>
+      <Position8>
+        <Filename Value="AppLogic.pas"/>
+        <Caret Line="176" Column="50" TopLine="146"/>
+      </Position8>
+      <Position9>
+        <Filename Value="AppForm.pas"/>
+        <Caret Line="88" Column="53" TopLine="67"/>
+      </Position9>
+      <Position10>
+        <Filename Value="AppForm.pas"/>
+        <Caret Line="189" Column="6" TopLine="154"/>
+      </Position10>
+      <Position11>
+        <Filename Value="AppForm.pas"/>
+        <Caret Line="184" Column="27" TopLine="154"/>
+      </Position11>
+      <Position12>
+        <Filename Value="AppCore.pas"/>
+        <Caret Line="289" Column="1" TopLine="245"/>
+      </Position12>
+      <Position13>
+        <Filename Value="AppCore.pas"/>
+        <Caret Line="290" Column="1" TopLine="245"/>
+      </Position13>
+      <Position14>
+        <Filename Value="AppCore.pas"/>
+        <Caret Line="292" Column="1" TopLine="245"/>
+      </Position14>
+      <Position15>
+        <Filename Value="AppForm.pas"/>
+        <Caret Line="193" Column="1" TopLine="154"/>
+      </Position15>
+      <Position16>
+        <Filename Value="AppForm.pas"/>
+        <Caret Line="194" Column="1" TopLine="154"/>
+      </Position16>
+    </JumpHistory>
   </ProjectSession>
+  <Debugging>
+    <BreakPoints Count="1">
+      <Item1>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="AppForm.pas"/>
+        <Line Value="193"/>
+      </Item1>
+    </BreakPoints>
+  </Debugging>
   <EditorMacros Count="0"/>
 </CONFIG>

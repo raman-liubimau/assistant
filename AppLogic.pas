@@ -157,7 +157,7 @@ procedure TFlowRateLogic.Update();
 var
   Rate: Extended;
 begin
-  if not ((FMetalWeight.Value > FHeatWeight.Value) and FMetalWeight.IsZero()) then
+  if not ((FMetalWeight > FHeatWeight) and FMetalWeight.IsZero()) then
   begin
     Rate := FHeatWeight.Value / FMetalWeight.Value;
 
@@ -200,7 +200,7 @@ end;
 procedure TDeficitLogic.Update();
 begin
   if not FNormalFlowRate.IsZero() then
-    if FActualFlowRate.Value > FNormalFlowRate.Value then
+    if FActualFlowRate > FNormalFlowRate then
       FDeficit.Value := FHeatWeight.Value / FNormalFlowRate.Value - FMetalWeight.Value
     else
       FDeficit.Reset()

@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  ExtCtrls, AppCore, AppLogic;
+  ExtCtrls, Spin, EditBtn, AppCore, AppLogic;
 
 type
 
@@ -15,6 +15,7 @@ type
   TMainForm = class(TForm)
     BarWeight: TEdit;
     BarCount: TEdit;
+    NormalFlowRate: TFloatSpinEdit;
     ResetWeight: TButton;
     MetalWeight1: TEdit;
     MetalWeight2: TEdit;
@@ -22,7 +23,6 @@ type
     MetalWeight4: TEdit;
     MetalWeight5: TEdit;
     MetalWeight: TEdit;
-    NormalFlowRate: TEdit;
     ActualFlowRate: TEdit;
     Deficit: TEdit;
     HeatWeight: TEdit;
@@ -64,7 +64,7 @@ type
     FMetalWeight5Controller: TScalarController;
     FMetalWeightController: TScalarController;
 
-    FNormalFlowRateController: TScalarController;
+    {FNormalFlowRateController: TScalarController;}
     FActualFlowRateController: TScalarController;
     FDeficitController: TScalarController;
 
@@ -104,7 +104,7 @@ begin
   FMetalWeight5Controller := TScalarController.Create(MetalWeight5, ScalarIntegerViewFactory);
   FMetalWeightController := TScalarController.Create(MetalWeight, ScalarIntegerViewFactory);
 
-  FNormalFlowRateController := TScalarController.Create(NormalFlowRate, ScalarFloatViewFactory);
+  {FNormalFlowRateController := TScalarController.Create(NormalFlowRate, ScalarFloatViewFactory);}
   FActualFlowRateController := TScalarController.Create(ActualFlowRate, ScalarFloatViewFactory);
   FDeficitController := TScalarController.Create(Deficit, ScalarIntegerViewFactory);
 
@@ -120,11 +120,11 @@ begin
   FFlowRateLogic := TFlowRateLogic.Create(FHeatWeightController.Model,
                                           FMetalWeightController.Model,
                                           FActualFlowRateController.Model);
-  FDeficitLogic := TDeficitLogic.Create(FHeatWeightController.Model,
+  {FDeficitLogic := TDeficitLogic.Create(FHeatWeightController.Model,
                                         FMetalWeightController.Model,
                                         FNormalFlowRateController.Model,
                                         FActualFlowRateController.Model,
-                                        FDeficitController.Model);
+                                        FDeficitController.Model);}
 
   ScalarFloatViewFactory.Free();
   ScalarIntegerViewFactory.Free();
@@ -150,7 +150,7 @@ begin
 
   FDeficitController.Free();
   FActualFlowRateController.Free();
-  FNormalFlowRateController.Free();
+  {FNormalFlowRateController.Free();}
 end;
 
 procedure TMainForm.BarWeightChange(Sender: TObject);
@@ -190,7 +190,7 @@ end;
 
 procedure TMainForm.NormalFlowRateChange(Sender: TObject);
 begin
-  FNormalFlowRateController.SetValue(TEdit(Sender).Text);
+  {FNormalFlowRateController.SetValue(TEdit(Sender).Text);}
 end;
 
 procedure TMainForm.ResetWeightClick(Sender: TObject);

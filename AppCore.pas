@@ -106,6 +106,11 @@ type
     property Model: TScalar read FModel;
   end;
 
+  operator > (const Left: TScalar; const Right: TScalar): Boolean;
+  operator < (const Left: TScalar; const Right: TScalar): Boolean;
+  operator >= (const Left: TScalar; const Right: TScalar): Boolean;
+  operator <= (const Left: TScalar; const Right: TScalar): Boolean;
+
 implementation
 
 { TObserver }
@@ -291,6 +296,28 @@ begin
     FModel.Value := StrToFloat(Value)
   else
     Reset();
+end;
+
+{ Overloaded operators }
+
+operator > (const Left: TScalar; const Right: TScalar): Boolean;
+begin
+  Result := (Left.Value > Right.Value);
+end;
+
+operator < (const Left: TScalar; const Right: TScalar): Boolean;
+begin
+  Result := (Left.Value < Right.Value);
+end;
+
+operator >= (const Left: TScalar; const Right: TScalar): Boolean;
+begin
+  Result := (Left.Value >= Right.Value);
+end;
+
+operator <= (const Left: TScalar; const Right: TScalar): Boolean;
+begin
+  Result := (Left.Value <= Right.Value);
 end;
 
 end.

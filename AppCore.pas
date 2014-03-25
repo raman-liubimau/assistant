@@ -38,72 +38,72 @@ type
 
     procedure Reset();
 
-    function IsZero(): Boolean;
-
     property Value: Extended read FValue write SetValue;
   end;
 
   TScalarView = class abstract(TObserver)
   private
-    FModel: TScalar;
-    FEdit: TEdit;
+    FScalar: TScalar;
+    FControl: TEdit;
   protected
     function FloatToString(Value: Extended): string; virtual; abstract;
   public
-    constructor Create(Model: TScalar; Edit: TEdit);
+    constructor Create(Scalar: TScalar; Control: TEdit);
     destructor Destroy(); override;
 
     procedure Update(); override;
+  end;
+
+  TScalarViewFactory = class abstract(TObject)
+  public
+    constructor Create();
+
+    function CreateView(Scalar: TScalar; Control: TEdit): TScalarView; virtual; abstract;
+  end;
+
+  TScalarController = class(TObject)
+  private
+    FScalar: TScalar;
+    FScalarView: TScalarView;
+  public
+    constructor Create(); overload;
+    constructor Create(Control: TEdit; Factory: TScalarViewFactory); overload;
+    destructor Destroy(); override;
+
+    procedure Reset();
+
+    procedure SetValue(Value: string); overload;
+    procedure SetValue(Value: Extended); overload;
+
+    property Model: TScalar read FScalar;
   end;
 
   TScalarIntegerView = class(TScalarView)
   protected
     function FloatToString(Value: Extended): string; override;
   public
-    constructor Create(Model: TScalar; Edit: TEdit);
+    constructor Create(Scalar: TScalar; Control: TEdit);
   end;
 
   TScalarFloatView = class(TScalarView)
   protected
     function FloatToString(Value: Extended): string; override;
   public
-    constructor Create(Model: TScalar; Edit: TEdit);
+    constructor Create(Scalar: TScalar; Control: TEdit);
   end;
 
-  TScalarViewAbstractFactory = class abstract(TObject)
+  TScalarIntegerViewFactory = class(TScalarViewFactory)
   public
     constructor Create();
 
-    function CreateView(Model: TScalar; Edit: TEdit): TScalarView; virtual; abstract;
+    function CreateView(Scalar: TScalar; Control: TEdit): TScalarView; override;
   end;
 
-  TScalarIntegerViewFactory = class(TScalarViewAbstractFactory)
+  TScalarFloatViewFactory = class(TScalarViewFactory)
   public
     constructor Create();
 
-    function CreateView(Model: TScalar; Edit: TEdit): TScalarView; override;
-  end;
-
-  TScalarFloatViewFactory = class(TScalarViewAbstractFactory)
-  public
-    constructor Create();
-
-    function CreateView(Model: TScalar; Edit: TEdit): TScalarView; override;
-  end;
-
-  TScalarController = class(TObject)
-  private
-    FModel: TScalar;
-    FView: TScalarView;
-  public
-    constructor Create(Edit: TEdit; Factory: TScalarViewAbstractFactory);
-    destructor Destroy(); override;
-
-    procedure Reset();
-
-    procedure SetValue(Value: string);
-
-    property Model: TScalar read FModel;
+    function CreateView(Scalar: TScalar; Control: TEdit): TScalarView; override;
   end;
 
   operator > (const Left: TScalar; const Right: TScalar): Boolean;
@@ -172,11 +172,6 @@ begin
   SetValue(0.0);
 end;
 
-function TScalar.IsZero(): Boolean;
-begin
-  Result := (FValue = 0.0);
-end;
-
 procedure TScalar.SetValue(NewValue: Extended);
 begin
   FValue := NewValue;
@@ -186,37 +181,37 @@ end;
 
 { TScalarView }
 
-constructor TScalarView.Create(Model: TScalar; Edit: TEdit);
+constructor TScalarView.Create(Scalar: TScalar; Control: TEdit);
 begin
   inherited Create();
 
-  FModel := Model;
-  FEdit := Edit;
+  FScalar := Scalar;
+  FControl := Control;
 
-  FModel.Attach(Self);
+  FScalar.Attach(Self);
 end;
 
 destructor TScalarView.Destroy();
 begin
-  FModel.Detach(Self);
+  FScalar.Detach(Self);
 
   inherited Destroy();
 end;
 
 procedure TScalarView.Update();
 begin
-  if not ((Length(FEdit.Text) = 0) and FModel.IsZero()) then
-    if FModel.IsZero() then
-      FEdit.Clear()
+  if not ((Length(FControl.Text) = 0) and (FScalar.Value = 0.0)) then
+    if FScalar.Value <> 0.0 then
+      FControl.Text := FloatToString(FScalar.Value)
     else
-        FEdit.Text := FloatToString(FModel.Value);
+      FControl.Clear()
 end;
 
 { TScalarIntegerView }
 
-constructor TScalarIntegerView.Create(Model: TScalar; Edit: TEdit);
+constructor TScalarIntegerView.Create(Scalar: TScalar; Control: TEdit);
 begin
-  inherited Create(Model, Edit);
+  inherited Create(Scalar, Control);
 end;
 
 function TScalarIntegerView.FloatToString(Value: Extended): string;
@@ -226,9 +221,9 @@ end;
 
 { TScalarFloatView }
 
-constructor TScalarFloatView.Create(Model: TScalar; Edit: TEdit);
+constructor TScalarFloatView.Create(Scalar: TScalar; Control: TEdit);
 begin
-  inherited Create(Model, Edit);
+  inherited Create(Scalar, Control);
 end;
 
 function TScalarFloatView.FloatToString(Value: Extended): string;
@@ -236,9 +231,9 @@ begin
   Result := FloatToStrF(Value, ffFixed, 1, 3);
 end;
 
-{ TScalarViewAbstractFactory }
+{ TScalarViewFactory }
 
-constructor TScalarViewAbstractFactory.Create();
+constructor TScalarViewFactory.Create();
 begin
   inherited Create();
 end;
@@ -250,9 +245,9 @@ begin
   inherited Create();
 end;
 
-function TScalarIntegerViewFactory.CreateView(Model: TScalar; Edit: TEdit): TScalarView;
+function TScalarIntegerViewFactory.CreateView(Scalar: TScalar; Control: TEdit): TScalarView;
 begin
-  Result := TScalarIntegerView.Create(Model, Edit);
+  Result := TScalarIntegerView.Create(Scalar, Control);
 end;
 
 { TScalarFloatViewFactory }
@@ -262,40 +257,53 @@ begin
   inherited Create();
 end;
 
-function TScalarFloatViewFactory.CreateView(Model: TScalar; Edit: TEdit): TScalarView;
+function TScalarFloatViewFactory.CreateView(Scalar: TScalar; Control: TEdit): TScalarView;
 begin
-  Result := TScalarFloatView.Create(Model, Edit);
+  Result := TScalarFloatView.Create(Scalar, Control);
 end;
 
 { TScalarController }
 
-constructor TScalarController.Create(Edit: TEdit; Factory: TScalarViewAbstractFactory);
+constructor TScalarController.Create();
 begin
   inherited Create();
 
-  FModel := TScalar.Create();
-  FView := Factory.CreateView(FModel, Edit);
+  FScalar := TScalar.Create();
+  FScalarView := nil;
+end;
+
+constructor TScalarController.Create(Control: TEdit; Factory: TScalarViewFactory);
+begin
+  inherited Create();
+
+  FScalar := TScalar.Create();
+  FScalarView := Factory.CreateView(FScalar, Control);
 end;
 
 destructor TScalarController.Destroy();
 begin
-  FView.Free();
-  FModel.Free();
+  FScalarView.Free();
+  FScalar.Free();
 
   inherited Destroy();
 end;
 
 procedure TScalarController.Reset();
 begin
-  FModel.Reset();
+  FScalar.Reset();
 end;
 
 procedure TScalarController.SetValue(Value: string);
 begin
   if Length(Value) <> 0 then
-    FModel.Value := StrToFloat(Value)
+    FScalar.Value := StrToFloat(Value)
   else
     Reset();
+end;
+
+procedure TScalarController.SetValue(Value: Extended);
+begin
+  FScalar.Value := Value;
 end;
 
 { Overloaded operators }

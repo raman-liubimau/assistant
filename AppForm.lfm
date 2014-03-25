@@ -251,10 +251,10 @@ object MainForm: TMainForm
       DecimalPlaces = 3
       Increment = 0.001
       MaxValue = 1.1
-      MinValue = 1.01
+      MinValue = 1
       OnChange = NormalFlowRateChange
       TabOrder = 2
-      Value = 1.02
+      Value = 1
     end
   end
 end

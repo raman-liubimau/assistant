@@ -64,7 +64,7 @@ type
     FMetalWeight5Controller: TScalarController;
     FMetalWeightController: TScalarController;
 
-    {FNormalFlowRateController: TScalarController;}
+    FNormalFlowRateController: TScalarController;
     FActualFlowRateController: TScalarController;
     FDeficitController: TScalarController;
 
@@ -104,7 +104,7 @@ begin
   FMetalWeight5Controller := TScalarController.Create(MetalWeight5, ScalarIntegerViewFactory);
   FMetalWeightController := TScalarController.Create(MetalWeight, ScalarIntegerViewFactory);
 
-  {FNormalFlowRateController := TScalarController.Create(NormalFlowRate, ScalarFloatViewFactory);}
+  FNormalFlowRateController := TScalarController.Create();
   FActualFlowRateController := TScalarController.Create(ActualFlowRate, ScalarFloatViewFactory);
   FDeficitController := TScalarController.Create(Deficit, ScalarIntegerViewFactory);
 
@@ -120,11 +120,11 @@ begin
   FFlowRateLogic := TFlowRateLogic.Create(FHeatWeightController.Model,
                                           FMetalWeightController.Model,
                                           FActualFlowRateController.Model);
-  {FDeficitLogic := TDeficitLogic.Create(FHeatWeightController.Model,
+  FDeficitLogic := TDeficitLogic.Create(FHeatWeightController.Model,
                                         FMetalWeightController.Model,
                                         FNormalFlowRateController.Model,
                                         FActualFlowRateController.Model,
-                                        FDeficitController.Model);}
+                                        FDeficitController.Model);
 
   ScalarFloatViewFactory.Free();
   ScalarIntegerViewFactory.Free();
@@ -150,7 +150,7 @@ begin
 
   FDeficitController.Free();
   FActualFlowRateController.Free();
-  {FNormalFlowRateController.Free();}
+  FNormalFlowRateController.Free();
 end;
 
 procedure TMainForm.BarWeightChange(Sender: TObject);
@@ -190,7 +190,7 @@ end;
 
 procedure TMainForm.NormalFlowRateChange(Sender: TObject);
 begin
-  {FNormalFlowRateController.SetValue(TEdit(Sender).Text);}
+  FNormalFlowRateController.SetValue(TFloatSpinEdit(Sender).Value);
 end;
 
 procedure TMainForm.ResetWeightClick(Sender: TObject);

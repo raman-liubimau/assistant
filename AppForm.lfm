@@ -1,76 +1,79 @@
 object MainForm: TMainForm
-  Left = 424
-  Height = 348
-  Top = 313
-  Width = 220
+  Left = 517
+  Height = 336
+  Top = 231
+  Width = 206
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Assistant'
-  ClientHeight = 348
-  ClientWidth = 220
+  ClientHeight = 336
+  ClientWidth = 206
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
   LCLVersion = '1.2.0.3'
   object HeatSettings: TGroupBox
-    Left = 0
-    Height = 104
-    Top = 0
-    Width = 220
+    Left = 5
+    Height = 99
+    Top = 3
+    Width = 196
     Align = alTop
+    BorderSpacing.Left = 5
+    BorderSpacing.Top = 3
+    BorderSpacing.Right = 5
     Caption = 'Плавка'
-    ClientHeight = 75
-    ClientWidth = 214
+    ClientHeight = 81
+    ClientWidth = 192
     TabOrder = 0
     object Label1: TLabel
       Left = 13
-      Height = 15
-      Top = 12
-      Width = 104
+      Height = 13
+      Top = 9
+      Width = 89
       Caption = 'Масса заготовки:'
       ParentColor = False
     end
     object Label2: TLabel
       Left = 13
-      Height = 15
-      Top = 36
-      Width = 109
+      Height = 13
+      Top = 33
+      Width = 94
       Caption = 'Кол-во заготовок:'
       ParentColor = False
     end
     object Label3: TLabel
       Left = 13
-      Height = 15
-      Top = 60
-      Width = 87
+      Height = 13
+      Top = 57
+      Width = 73
       Caption = 'Масса плавки:'
       ParentColor = False
     end
     object Edit1: TEdit
-      Left = 141
-      Height = 23
+      Left = 129
+      Height = 21
       Top = 4
-      Width = 64
+      Width = 56
       OnChange = Edit1Change
       OnClick = ClearOnClick
       TabOrder = 0
       Text = 'Edit1'
     end
     object Edit2: TEdit
-      Left = 141
-      Height = 23
+      Left = 129
+      Height = 21
       Top = 28
-      Width = 64
+      Width = 56
       OnChange = Edit2Change
       OnClick = ClearOnClick
       TabOrder = 1
       Text = 'Edit2'
     end
     object Edit3: TEdit
-      Left = 141
-      Height = 23
+      Left = 129
+      Height = 21
       Top = 52
-      Width = 64
+      Width = 56
       OnChange = Edit3Change
       OnClick = ChangeMode
       TabOrder = 2
@@ -78,77 +81,79 @@ object MainForm: TMainForm
     end
   end
   object MetalSettings: TGroupBox
-    Left = 0
-    Height = 138
-    Top = 104
-    Width = 220
+    Left = 5
+    Height = 131
+    Top = 102
+    Width = 196
     Align = alClient
+    BorderSpacing.Left = 5
+    BorderSpacing.Right = 5
     Caption = 'Металлопрокат'
-    ClientHeight = 109
-    ClientWidth = 214
+    ClientHeight = 113
+    ClientWidth = 192
     TabOrder = 1
     object Label4: TLabel
       Left = 13
-      Height = 15
-      Top = 12
-      Width = 11
+      Height = 13
+      Top = 9
+      Width = 10
       Caption = '1:'
       ParentColor = False
     end
     object Label5: TLabel
       Left = 13
-      Height = 15
-      Top = 36
-      Width = 11
+      Height = 13
+      Top = 33
+      Width = 10
       Caption = '2:'
       ParentColor = False
     end
     object Label6: TLabel
       Left = 13
-      Height = 15
-      Top = 60
-      Width = 11
+      Height = 13
+      Top = 57
+      Width = 10
       Caption = '3:'
       ParentColor = False
     end
     object Label7: TLabel
-      Left = 125
-      Height = 15
-      Top = 12
-      Width = 11
+      Left = 113
+      Height = 13
+      Top = 9
+      Width = 10
       Caption = '4:'
       ParentColor = False
     end
     object Label8: TLabel
-      Left = 125
-      Height = 15
-      Top = 36
-      Width = 11
+      Left = 113
+      Height = 13
+      Top = 33
+      Width = 10
       Caption = '5:'
       ParentColor = False
     end
     object Button1: TButton
-      Left = 125
-      Height = 23
+      Left = 113
+      Height = 21
       Top = 52
-      Width = 80
+      Width = 72
       Caption = 'Сброс'
       OnClick = Button1Click
       TabOrder = 0
     end
     object Label9: TLabel
       Left = 13
-      Height = 15
-      Top = 92
-      Width = 85
+      Height = 13
+      Top = 89
+      Width = 70
       Caption = 'Общая масса:'
       ParentColor = False
     end
     object Edit4: TEdit
       Left = 29
-      Height = 23
+      Height = 21
       Top = 4
-      Width = 64
+      Width = 56
       OnChange = Edit4Change
       OnClick = ClearOnClick
       TabOrder = 1
@@ -156,9 +161,9 @@ object MainForm: TMainForm
     end
     object Edit5: TEdit
       Left = 29
-      Height = 23
+      Height = 21
       Top = 28
-      Width = 64
+      Width = 56
       OnChange = Edit5Change
       OnClick = ClearOnClick
       TabOrder = 2
@@ -166,102 +171,105 @@ object MainForm: TMainForm
     end
     object Edit6: TEdit
       Left = 29
-      Height = 23
+      Height = 21
       Top = 52
-      Width = 64
+      Width = 57
       OnChange = Edit6Change
       OnClick = ClearOnClick
       TabOrder = 3
       Text = 'Edit6'
     end
     object Edit7: TEdit
-      Left = 141
-      Height = 23
+      Left = 129
+      Height = 21
       Top = 4
-      Width = 64
+      Width = 56
       OnChange = Edit7Change
       OnClick = ClearOnClick
       TabOrder = 4
       Text = 'Edit7'
     end
     object Edit8: TEdit
-      Left = 141
-      Height = 23
+      Left = 129
+      Height = 21
       Top = 28
-      Width = 64
+      Width = 56
       OnChange = Edit8Change
       OnClick = ClearOnClick
       TabOrder = 5
       Text = 'Edit8'
     end
     object Edit9: TEdit
-      Left = 141
-      Height = 23
+      Left = 129
+      Height = 21
       Top = 84
-      Width = 64
+      Width = 56
       ReadOnly = True
       TabOrder = 6
       Text = 'Edit9'
     end
   end
   object FlowRateSettings: TGroupBox
-    Left = 0
-    Height = 106
-    Top = 242
-    Width = 220
+    Left = 5
+    Height = 98
+    Top = 233
+    Width = 196
     Align = alBottom
+    BorderSpacing.Left = 5
+    BorderSpacing.Right = 5
+    BorderSpacing.Bottom = 5
     Caption = 'Коэф. расхода'
-    ClientHeight = 77
-    ClientWidth = 214
+    ClientHeight = 80
+    ClientWidth = 192
     TabOrder = 2
     object Label10: TLabel
       Left = 13
-      Height = 15
-      Top = 11
-      Width = 85
+      Height = 13
+      Top = 9
+      Width = 67
       Caption = 'Нормальный:'
       ParentColor = False
     end
     object Label11: TLabel
       Left = 13
-      Height = 15
-      Top = 36
-      Width = 83
+      Height = 13
+      Top = 33
+      Width = 71
       Caption = 'Фактический:'
       ParentColor = False
     end
     object Label12: TLabel
       Left = 13
-      Height = 15
-      Top = 60
-      Width = 57
+      Height = 13
+      Top = 57
+      Width = 50
       Caption = 'Дефицит:'
       ParentColor = False
     end
     object Edit10: TEdit
-      Left = 141
-      Height = 23
-      Top = 2
-      Width = 64
+      Left = 129
+      Height = 21
+      Top = 4
+      Width = 56
       OnChange = Edit10Change
       OnClick = ClearOnClick
       TabOrder = 0
       Text = 'Edit10'
     end
     object Edit11: TEdit
-      Left = 141
-      Height = 23
+      Left = 129
+      Height = 21
       Top = 28
-      Width = 64
+      Width = 56
       ReadOnly = True
       TabOrder = 1
       Text = 'Edit11'
     end
     object Edit12: TEdit
-      Left = 141
-      Height = 23
+      Left = 129
+      Height = 21
       Top = 52
-      Width = 64
+      Width = 56
       ReadOnly = True
       TabOrder = 2
       Text = 'Edit12'

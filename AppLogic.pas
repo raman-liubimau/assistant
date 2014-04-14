@@ -8,206 +8,207 @@ uses
   Classes, SysUtils, AppCore;
 
 type
-  THeatWeightLogic = class(TObserver)
+
+  TLogic = class abstract(TObserver)
   private
-    FBarWeight: TScalar;
-    FBarCount: TScalar;
-    FHeatWeight: TScalar;
+    FTargetObject: TObject;
+    FDependencies: TList;
+  protected
+    procedure AddDependency(Dependency: TSubject; NeedSubscribe: Boolean = True);
+    procedure PerformAction(TargetObject: TObject; Dependencies: TList); virtual; abstract;
   public
-    constructor Create(BarWeight, BarCount, HeatWeight: TScalar);
+    constructor Create(TargetObject: TObject);
     destructor Destroy(); override;
 
     procedure Update(); override;
   end;
 
-  TMetalWeightLogic = class(TObserver)
-  private
-    FMetalWeight1: TScalar;
-    FMetalWeight2: TScalar;
-    FMetalWeight3: TScalar;
-    FMetalWeight4: TScalar;
-    FMetalWeight5: TScalar;
-    FMetalWeight: TScalar;
+  THeatWeightLogic = class(TLogic)
+  protected
+    procedure PerformAction(TargetObject: TObject; Dependencies: TList); override;
   public
-    constructor Create(MetalWeight1, MetalWeight2, MetalWeight3,
-                       MetalWeight4, MetalWeight5, MetalWeight: TScalar);
-    destructor Destroy(); override;
-
-    procedure Update(); override;
+    constructor Create(BilletWeight, NumOfBillets, HeatWeight: TCustomValue);
   end;
 
-  TFlowRateLogic = class(TObserver)
-  private
-    FHeatWeight: TScalar;
-    FMetalWeight: TScalar;
-    FFlowRate: TScalar;
+  TMetalWeightLogic = class(TLogic)
+  protected
+    procedure PerformAction(TargetObject: TObject; Dependencies: TList); override;
   public
-    constructor Create(HeatWeight, MetalWeight, FlowRate: TScalar);
-    destructor Destroy(); override;
-
-    procedure Update(); override;
+    constructor Create(MetalWeight1, MetalWeight2, MetalWeight3, MetalWeight4,
+                       MetalWeight5, MetalWeightT: TCustomValue);
   end;
 
-  TDeficitLogic = class(TObserver)
-  private
-    FHeatWeight: TScalar;
-    FMetalWeight: TScalar;
-    FNormalFlowRate: TScalar;
-    FActualFlowRate: TScalar;
-    FDeficit: TScalar;
+  TActualRateLogic = class(TLogic)
+  protected
+    procedure PerformAction(TargetObject: TObject; Dependencies: TList); override;
   public
-    constructor Create(HeatWeight, MetalWeight, NormalFlowRate,
-                       ActualFlowRate, Deficit: TScalar);
-    destructor Destroy(); override;
+    constructor Create(HeatWeight, MetalWeight, ActualRate: TCustomValue);
+  end;
 
-    procedure Update(); override;
+  TDeficitLogic = class(TLogic)
+  protected
+    procedure PerformAction(TargetObject: TObject; Dependencies: TList); override;
+  public
+    constructor Create(HeatWeight, MetalWeight, ActualRate, NormalRate, Deficit: TCustomValue);
   end;
 
 implementation
 
-{ THeatWeightLogic }
+{ Helpers }
 
-constructor THeatWeightLogic.Create(BarWeight, BarCount, HeatWeight: TScalar);
+procedure SetValue(TargetObject: TObject; Value: Extended); inline;
 begin
-  inherited Create();
-
-  FBarWeight := BarWeight;
-  FBarCount := BarCount;
-  FHeatWeight := HeatWeight;
-
-  FBarWeight.Attach(Self);
-  FBarCount.Attach(Self);
+  TCustomValue(TargetObject).Value := Value;
 end;
 
-destructor THeatWeightLogic.Destroy();
+{ TLogic }
+
+constructor TLogic.Create(TargetObject: TObject);
 begin
-  FBarCount.Detach(Self);
-  FBarWeight.Detach(Self);
+  FTargetObject := TargetObject;
+  FDependencies := TList.Create();
+end;
+
+destructor TLogic.Destroy();
+begin
+  with FDependencies.GetEnumerator() do
+  begin
+    while MoveNext() do
+      TSubject(GetCurrent()).Detach(Self);
+
+    Free();
+  end;
+
+  FDependencies.Free();
 
   inherited Destroy();
 end;
 
-procedure THeatWeightLogic.Update();
+procedure TLogic.Update();
 begin
-  FHeatWeight.Value := FBarWeight.Value * FBarCount.Value;
+  PerformAction(FTargetObject, FDependencies);
+end;
+
+procedure TLogic.AddDependency(Dependency: TSubject; NeedSubscribe: Boolean);
+begin
+  if NeedSubscribe then
+    Dependency.Attach(Self);
+
+  FDependencies.Add(Dependency);
+end;
+
+{ THeatWeightLogic }
+
+constructor THeatWeightLogic.Create(BilletWeight, NumOfBillets, HeatWeight: TCustomValue);
+begin
+  inherited Create(HeatWeight);
+
+  AddDependency(BilletWeight);
+  AddDependency(NumOfBillets);
+end;
+
+procedure THeatWeightLogic.PerformAction(TargetObject: TObject; Dependencies: TList);
+var
+  BilletWeight, NumOfBillets: Extended;
+begin
+  BilletWeight := TCustomValue(Dependencies.Items[0]).Value;
+  NumOfBillets := TCustomValue(Dependencies.Items[1]).Value;
+
+  SetValue(TargetObject, (BilletWeight * NumOfBillets));
 end;
 
 { TMetalWeightLogic }
 
 constructor TMetalWeightLogic.Create(MetalWeight1, MetalWeight2, MetalWeight3,
-                                     MetalWeight4, MetalWeight5, MetalWeight: TScalar);
+                                     MetalWeight4, MetalWeight5, MetalWeightT: TCustomValue);
 begin
-  inherited Create();
+  inherited Create(MetalWeightT);
 
-  FMetalWeight1 := MetalWeight1;
-  FMetalWeight2 := MetalWeight2;
-  FMetalWeight3 := MetalWeight3;
-  FMetalWeight4 := MetalWeight4;
-  FMetalWeight5 := MetalWeight5;
-  FMetalWeight := MetalWeight;
-
-  FMetalWeight1.Attach(Self);
-  FMetalWeight2.Attach(Self);
-  FMetalWeight3.Attach(Self);
-  FMetalWeight4.Attach(Self);
-  FMetalWeight5.Attach(Self);
+  AddDependency(MetalWeight1);
+  AddDependency(MetalWeight2);
+  AddDependency(MetalWeight3);
+  AddDependency(MetalWeight4);
+  AddDependency(MetalWeight5);
 end;
 
-destructor TMetalWeightLogic.Destroy();
-begin
-  FMetalWeight5.Detach(Self);
-  FMetalWeight4.Detach(Self);
-  FMetalWeight3.Detach(Self);
-  FMetalWeight2.Detach(Self);
-  FMetalWeight1.Detach(Self);
-
-  inherited Destroy();
-end;
-
-procedure TMetalWeightLogic.Update();
-begin
-  FMetalWeight.Value := FMetalWeight1.Value + FMetalWeight2.Value +
-                        FMetalWeight3.Value + FMetalWeight4.Value +
-                        FMetalWeight5.Value;
-end;
-
-{ TFlowRateLogic }
-
-constructor TFlowRateLogic.Create(HeatWeight, MetalWeight, FlowRate: TScalar);
-begin
-  inherited Create();
-
-  FHeatWeight := HeatWeight;
-  FMetalWeight := MetalWeight;
-  FFlowRate := FlowRate;
-
-  FHeatWeight.Attach(Self);
-  FMetalWeight.Attach(Self);
-end;
-
-destructor TFlowRateLogic.Destroy();
-begin
-  FMetalWeight.Detach(Self);
-  FHeatWeight.Detach(Self);
-
-  inherited Destroy();
-end;
-
-procedure TFlowRateLogic.Update();
+procedure TMetalWeightLogic.PerformAction(TargetObject: TObject; Dependencies: TList);
 var
-  Rate: Extended;
+  TotalWeight: Extended;
 begin
-  if not ((FMetalWeight > FHeatWeight) and (FMetalWeight.Value = 0.0)) then
-  begin
-    Rate := FHeatWeight.Value / FMetalWeight.Value;
+  TotalWeight := 0.0;
 
-    if Rate < 1.1 then
-      FFlowRate.Value := Rate
-    else
-      FFlowRate.Reset();
-  end
-  else
-    FFlowRate.Reset();
+  with Dependencies.GetEnumerator() do
+  begin
+    while MoveNext() do
+      TotalWeight += TCustomValue(GetCurrent()).Value;
+
+    Free();
+  end;
+
+  SetValue(TargetObject, TotalWeight);
+end;
+
+{ TActualRateLogic }
+
+constructor TActualRateLogic.Create(HeatWeight, MetalWeight, ActualRate: TCustomValue);
+begin
+  inherited Create(ActualRate);
+
+  AddDependency(HeatWeight);
+  AddDependency(MetalWeight);
+end;
+
+procedure TActualRateLogic.PerformAction(TargetObject: TObject; Dependencies: TList);
+var
+  HeatWeight, MetalWeight, ActualRate: Extended;
+begin
+  HeatWeight := TCustomValue(Dependencies.Items[0]).Value;
+  MetalWeight := TCustomValue(Dependencies.Items[1]).Value;
+
+  if (HeatWeight > MetalWeight) and not (MetalWeight = 0.0)  then
+  begin
+    ActualRate := HeatWeight / MetalWeight;
+
+    if (ActualRate < 1.1) then
+    begin
+      SetValue(TargetObject, ActualRate);
+      Exit();
+    end;
+  end;
+
+  SetValue(TargetObject, 0.0);
 end;
 
 { TDeficitLogic }
 
-constructor TDeficitLogic.Create(HeatWeight, MetalWeight, NormalFlowRate,
-                                 ActualFlowRate, Deficit: TScalar);
+constructor TDeficitLogic.Create(HeatWeight, MetalWeight, ActualRate, NormalRate, Deficit: TCustomValue);
 begin
-  inherited Create();
+  inherited Create(Deficit);
 
-  FHeatWeight := HeatWeight;
-  FMetalWeight := MetalWeight;
-  FNormalFlowRate := NormalFlowRate;
-  FActualFlowRate := ActualFlowRate;
-  FDeficit := Deficit;
-
-  FHeatWeight.Attach(Self);
-  FMetalWeight.Attach(Self);
-  FNormalFlowRate.Attach(Self);
-  FActualFlowRate.Attach(Self);
+  AddDependency(HeatWeight);
+  AddDependency(MetalWeight);
+  AddDependency(ActualRate, False);
+  AddDependency(NormalRate);
 end;
 
-destructor TDeficitLogic.Destroy();
+procedure TDeficitLogic.PerformAction(TargetObject: TObject; Dependencies: TList);
+var
+  HeatWeight, MetalWeight, ActualRate, NormalRate: Extended;
 begin
-  FActualFlowRate.Detach(Self);
-  FNormalFlowrate.Detach(Self);
-  FMetalWeight.Detach(Self);
-  FHeatWeight.Detach(Self);
+  HeatWeight := TCustomValue(Dependencies.Items[0]).Value;
+  MetalWeight := TCustomValue(Dependencies.Items[1]).Value;
+  ActualRate := TCustomValue(Dependencies.Items[2]).Value;
+  NormalRate := TCustomValue(Dependencies.Items[3]).Value;
 
-  inherited Destroy();
-end;
+  if (NormalRate > 1.0) and (NormalRate < 2.0) then
+    if not (HeatWeight = 0.0) then
+      if (ActualRate > NormalRate) or (ActualRate = 0.0) then
+      begin
+        SetValue(TargetObject, Round(HeatWeight / NormalRate - MetalWeight));
+        Exit();
+      end;
 
-procedure TDeficitLogic.Update();
-begin
-  if FNormalFlowRate.Value <> 0.0 then
-    if (FActualFlowRate > FNormalFlowRate) or (FActualFlowRate.Value = 0.0) then
-      FDeficit.Value := FHeatWeight.Value / FNormalFlowRate.Value - FMetalWeight.Value
-    else
-      FDeficit.Reset()
-  else
-    FDeficit.Reset();
+  SetValue(TargetObject, 0.0);
 end;
 
 end.

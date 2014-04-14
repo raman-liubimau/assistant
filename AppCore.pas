@@ -5,17 +5,27 @@ unit AppCore;
 interface
 
 uses
-  Classes, SysUtils, StdCtrls;
+  Classes, SysUtils, StdCtrls, Graphics;
 
 type
-  TObserver = class abstract(TObject)
+
+  TLock = class
+  private
+    FLocked: Boolean;
   public
     constructor Create();
 
+    function Lock(): Boolean;
+
+    procedure Unlock();
+  end;
+
+  TObserver = class abstract
+  public
     procedure Update(); virtual; abstract;
   end;
 
-  TSubject = class abstract(TObject)
+  TSubject = class abstract
   private
     FObservers: TList;
   protected
@@ -28,104 +38,84 @@ type
     procedure Detach(Observer: TObserver);
   end;
 
-  TScalar = class(TSubject)
+  TCustomValue = class(TSubject)
   private
     FValue: Extended;
   protected
     procedure SetValue(NewValue: Extended);
   public
-    constructor Create();
+    constructor Create(InitialValue: Extended);
 
-    procedure Reset();
+    procedure Reset(); inline;
 
     property Value: Extended read FValue write SetValue;
   end;
 
-  TScalarView = class abstract(TObserver)
+  TValuePresenter = class abstract(TObserver)
   private
-    FScalar: TScalar;
-    FControl: TEdit;
+    FValue: TCustomValue;
+    FView: TCustomEdit;
+
+    FLockUpdate: TLock;
   protected
     function FloatToString(Value: Extended): string; virtual; abstract;
   public
-    constructor Create(Scalar: TScalar; Control: TEdit);
+    constructor Create(View: TCustomEdit; InitialValue: Extended);
     destructor Destroy(); override;
 
     procedure Update(); override;
+    procedure UpdateModel();
+
+    function GetModel(): TCustomValue;
   end;
 
-  TScalarViewFactory = class abstract(TObject)
-  public
-    constructor Create();
-
-    function CreateView(Scalar: TScalar; Control: TEdit): TScalarView; virtual; abstract;
-  end;
-
-  TScalarController = class(TObject)
-  private
-    FScalar: TScalar;
-    FScalarView: TScalarView;
-  public
-    constructor Create(); overload;
-    constructor Create(Control: TEdit; Factory: TScalarViewFactory); overload;
-    destructor Destroy(); override;
-
-    procedure Reset();
-
-    procedure SetValue(Value: string); overload;
-    procedure SetValue(Value: Extended); overload;
-
-    property Model: TScalar read FScalar;
-  end;
-
-  TScalarIntegerView = class(TScalarView)
+  TFloatValuePresenter = class(TValuePresenter)
   protected
     function FloatToString(Value: Extended): string; override;
   public
-    constructor Create(Scalar: TScalar; Control: TEdit);
+    constructor Create(View: TCustomEdit; InitialValue: Extended = 0.0);
   end;
 
-  TScalarFloatView = class(TScalarView)
+  TIntegerValuePresenter = class(TValuePresenter)
   protected
     function FloatToString(Value: Extended): string; override;
   public
-    constructor Create(Scalar: TScalar; Control: TEdit);
+    constructor Create(View: TCustomEdit; InitialValue: Extended = 0.0);
   end;
 
-  TScalarIntegerViewFactory = class(TScalarViewFactory)
-  public
-    constructor Create();
+  { Overloaded operators }
 
-    function CreateView(Scalar: TScalar; Control: TEdit): TScalarView; override;
-  end;
-
-  TScalarFloatViewFactory = class(TScalarViewFactory)
-  public
-    constructor Create();
-
-    function CreateView(Scalar: TScalar; Control: TEdit): TScalarView; override;
-  end;
-
-  operator > (const Left: TScalar; const Right: TScalar): Boolean;
-  operator < (const Left: TScalar; const Right: TScalar): Boolean;
-  operator >= (const Left: TScalar; const Right: TScalar): Boolean;
-  operator <= (const Left: TScalar; const Right: TScalar): Boolean;
+  operator := (Right: TCustomValue): Extended; inline;
 
 implementation
 
-{ TObserver }
+{ TLock }
 
-constructor TObserver.Create();
+constructor TLock.Create();
 begin
-  inherited Create();
+  FLocked := False;
+end;
+
+function TLock.Lock(): Boolean;
+begin
+  if FLocked then
+    Result := not FLocked
+  else
+  begin
+    FLocked := True;
+    Result := FLocked;
+  end;
+end;
+
+procedure TLock.Unlock();
+begin
+  FLocked := False;
 end;
 
 { TSubject }
 
 constructor TSubject.Create();
 begin
-  inherited Create();
-
   FObservers := TList.Create();
 end;
 
@@ -143,189 +133,142 @@ end;
 
 procedure TSubject.Detach(Observer: TObserver);
 begin
-  fObservers.Remove(Observer);
+  FObservers.Remove(Observer);
 end;
 
 procedure TSubject.Notify();
-var
-  Enumerator: TListEnumerator;
 begin
-  Enumerator := FObservers.GetEnumerator();
+  with FObservers.GetEnumerator() do
+  begin
+    while MoveNext() do
+      TObserver(GetCurrent()).Update();
 
-  while Enumerator.MoveNext() do
-    TObserver(Enumerator.GetCurrent()).Update();
-
-  Enumerator.Free();
+    Free();
+  end;
 end;
 
-{ TScalar }
+{ TCustomValue }
 
-constructor TScalar.Create();
+constructor TCustomValue.Create(InitialValue: Extended);
 begin
   inherited Create();
 
-  FValue := 0.0;
+  FValue := InitialValue;
 end;
 
-procedure TScalar.Reset();
+procedure TCustomValue.Reset();
 begin
-  SetValue(0.0);
+  Value := 0.0;
 end;
 
-procedure TScalar.SetValue(NewValue: Extended);
+procedure TCustomValue.SetValue(NewValue: Extended);
 begin
-  FValue := NewValue;
+  // We need to notify observers only if value changed really
+  if not (NewValue = FValue) then
+  begin
+    FValue := NewValue;
 
-  Notify();
+    Notify();
+  end;
 end;
 
-{ TScalarView }
+{ TValuePresenter }
 
-constructor TScalarView.Create(Scalar: TScalar; Control: TEdit);
+constructor TValuePresenter.Create(View: TCustomEdit; InitialValue: Extended);
 begin
-  inherited Create();
+  FValue := TCustomValue.Create(InitialValue);
+  FView := View;
 
-  FScalar := Scalar;
-  FControl := Control;
+  FLockUpdate := TLock.Create();
 
-  FScalar.Attach(Self);
+  FValue.Attach(Self);
 end;
 
-destructor TScalarView.Destroy();
+destructor TValuePresenter.Destroy();
 begin
-  FScalar.Detach(Self);
+  FValue.Detach(Self);
+  FValue.Free();
+
+  FLockUpdate.Free();
 
   inherited Destroy();
 end;
 
-procedure TScalarView.Update();
+procedure TValuePresenter.Update();
 begin
-  if not ((Length(FControl.Text) = 0) and (FScalar.Value = 0.0)) then
-    if FScalar.Value <> 0.0 then
-      FControl.Text := FloatToString(FScalar.Value)
+  if FLockUpdate.Lock() then
+  begin
+    if not (Extended(FValue) = 0.0) then
+      FView.Text := FloatToString(FValue)
     else
-      FControl.Clear()
+      FView.Clear();
+
+    FLockUpdate.Unlock();
+  end;
 end;
 
-{ TScalarIntegerView }
-
-constructor TScalarIntegerView.Create(Scalar: TScalar; Control: TEdit);
+procedure TValuePresenter.UpdateModel();
 begin
-  inherited Create(Scalar, Control);
+  try
+    if FLockUpdate.Lock() then
+    begin
+      if not (Length(FView.Text) = 0) then
+        FValue.Value := StrToFloat(FView.Text)
+      else
+        FValue.Reset();
+
+      // Restore default colors
+      if not (FView.Color = clDefault) then
+      begin
+        FView.Color := clDefault;
+        FView.Font.Color := clDefault;
+      end;
+
+      FLockUpdate.Unlock();
+    end;
+  except
+    // We have invalid data in textbox
+    FView.Color := clRed;
+    FView.Font.Color := clWhite;
+
+    FLockUpdate.Unlock();
+  end;
 end;
 
-function TScalarIntegerView.FloatToString(Value: Extended): string;
+function TValuePresenter.GetModel(): TCustomValue;
+begin
+  Result := FValue;
+end;
+
+{ TFloatValuePresenter }
+
+constructor TFloatValuePresenter.Create(View: TCustomEdit; InitialValue: Extended);
+begin
+  inherited Create(View, InitialValue);
+end;
+
+function TFloatValuePresenter.FloatToString(Value: Extended): string;
+begin
+  Result := FloatToStrF(Value, ffFixed, 4, 3);
+end;
+
+{ TIntegerValuePresenter }
+
+constructor TIntegerValuePresenter.Create(View: TCustomEdit; InitialValue: Extended);
+begin
+  inherited Create(View, InitialValue);
+end;
+
+function TIntegerValuePresenter.FloatToString(Value: Extended): string;
 begin
   Result := FloatToStrF(Value, ffFixed, 6, 0);
 end;
 
-{ TScalarFloatView }
-
-constructor TScalarFloatView.Create(Scalar: TScalar; Control: TEdit);
-begin
-  inherited Create(Scalar, Control);
-end;
-
-function TScalarFloatView.FloatToString(Value: Extended): string;
-begin
-  Result := FloatToStrF(Value, ffFixed, 1, 3);
-end;
-
-{ TScalarViewFactory }
-
-constructor TScalarViewFactory.Create();
-begin
-  inherited Create();
-end;
-
-{ TScalarIntegerViewFactory }
-
-constructor TScalarIntegerViewFactory.Create();
-begin
-  inherited Create();
-end;
-
-function TScalarIntegerViewFactory.CreateView(Scalar: TScalar; Control: TEdit): TScalarView;
-begin
-  Result := TScalarIntegerView.Create(Scalar, Control);
-end;
-
-{ TScalarFloatViewFactory }
-
-constructor TScalarFloatViewFactory.Create();
-begin
-  inherited Create();
-end;
-
-function TScalarFloatViewFactory.CreateView(Scalar: TScalar; Control: TEdit): TScalarView;
-begin
-  Result := TScalarFloatView.Create(Scalar, Control);
-end;
-
-{ TScalarController }
-
-constructor TScalarController.Create();
-begin
-  inherited Create();
-
-  FScalar := TScalar.Create();
-  FScalarView := nil;
-end;
-
-constructor TScalarController.Create(Control: TEdit; Factory: TScalarViewFactory);
-begin
-  inherited Create();
-
-  FScalar := TScalar.Create();
-  FScalarView := Factory.CreateView(FScalar, Control);
-end;
-
-destructor TScalarController.Destroy();
-begin
-  FScalarView.Free();
-  FScalar.Free();
-
-  inherited Destroy();
-end;
-
-procedure TScalarController.Reset();
-begin
-  FScalar.Reset();
-end;
-
-procedure TScalarController.SetValue(Value: string);
-begin
-  if Length(Value) <> 0 then
-    FScalar.Value := StrToFloat(Value)
-  else
-    Reset();
-end;
-
-procedure TScalarController.SetValue(Value: Extended);
-begin
-  FScalar.Value := Value;
-end;
-
 { Overloaded operators }
 
-operator > (const Left: TScalar; const Right: TScalar): Boolean;
+operator := (Right: TCustomValue): Extended;
 begin
-  Result := (Left.Value > Right.Value);
-end;
-
-operator < (const Left: TScalar; const Right: TScalar): Boolean;
-begin
-  Result := (Left.Value < Right.Value);
-end;
-
-operator >= (const Left: TScalar; const Right: TScalar): Boolean;
-begin
-  Result := (Left.Value >= Right.Value);
-end;
-
-operator <= (const Left: TScalar; const Right: TScalar): Boolean;
-begin
-  Result := (Left.Value <= Right.Value);
+  Result := Right.Value;
 end;
 
 end.

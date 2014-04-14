@@ -6,26 +6,26 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  ExtCtrls, Spin, EditBtn, AppCore, AppLogic;
+  ExtCtrls, EditBtn, AppCore, AppLogic;
 
 type
 
   { TMainForm }
 
   TMainForm = class(TForm)
-    BarWeight: TEdit;
-    BarCount: TEdit;
-    NormalFlowRate: TFloatSpinEdit;
-    ResetWeight: TButton;
-    MetalWeight1: TEdit;
-    MetalWeight2: TEdit;
-    MetalWeight3: TEdit;
-    MetalWeight4: TEdit;
-    MetalWeight5: TEdit;
-    MetalWeight: TEdit;
-    ActualFlowRate: TEdit;
-    Deficit: TEdit;
-    HeatWeight: TEdit;
+    Button1: TButton;
+    Edit1: TEdit;
+    Edit10: TEdit;
+    Edit11: TEdit;
+    Edit12: TEdit;
+    Edit2: TEdit;
+    Edit3: TEdit;
+    Edit4: TEdit;
+    Edit5: TEdit;
+    Edit6: TEdit;
+    Edit7: TEdit;
+    Edit8: TEdit;
+    Edit9: TEdit;
     HeatSettings: TGroupBox;
     Label10: TLabel;
     Label11: TLabel;
@@ -41,37 +41,42 @@ type
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
-    procedure BarCountChange(Sender: TObject);
-    procedure BarWeightChange(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure ChangeMode(Sender: TObject);
+    procedure ClearOnClick(Sender: TObject);
+    procedure Edit10Change(Sender: TObject);
+    procedure Edit1Change(Sender: TObject);
+    procedure Edit2Change(Sender: TObject);
+    procedure Edit3Change(Sender: TObject);
+    procedure Edit4Change(Sender: TObject);
+    procedure Edit5Change(Sender: TObject);
+    procedure Edit6Change(Sender: TObject);
+    procedure Edit7Change(Sender: TObject);
+    procedure Edit8Change(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure MetalWeight1Change(Sender: TObject);
-    procedure MetalWeight2Change(Sender: TObject);
-    procedure MetalWeight3Change(Sender: TObject);
-    procedure MetalWeight4Change(Sender: TObject);
-    procedure MetalWeight5Change(Sender: TObject);
-    procedure NormalFlowRateChange(Sender: TObject);
-    procedure ResetWeightClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
-    FBarWeightController: TScalarController;
-    FBarCountController: TScalarController;
-    FHeatWeightController: TScalarController;
+    FBilletWeight: TValuePresenter;
+    FNumOfBillets: TValuePresenter;
+    FHeatWeight: TValuePresenter;
 
-    FMetalWeight1Controller: TScalarController;
-    FMetalWeight2Controller: TScalarController;
-    FMetalWeight3Controller: TScalarController;
-    FMetalWeight4Controller: TScalarController;
-    FMetalWeight5Controller: TScalarController;
-    FMetalWeightController: TScalarController;
+    FMetalWeight1: TValuePresenter;
+    FMetalWeight2: TValuePresenter;
+    FMetalWeight3: TValuePresenter;
+    FMetalWeight4: TValuePresenter;
+    FMetalWeight5: TValuePresenter;
+    FMetalWeightT: TValuePresenter;
 
-    FNormalFlowRateController: TScalarController;
-    FActualFlowRateController: TScalarController;
-    FDeficitController: TScalarController;
+    FNormalRate: TValuePresenter;
+    FActualRate: TValuePresenter;
+    FDeficit: TValuePresenter;
 
-    FHeatWeightLogic: THeatWeightLogic;
-    FMetalWeightLogic: TMetalWeightLogic;
-    FFlowRateLogic: TFlowRateLogic;
-    FDeficitLogic: TDeficitLogic;
+    FHeatWeightLogic: TLogic;
+    FMetalWeightLogic: TLogic;
+    FActualRateLogic: TLogic;
+    FDeficitLogic: TLogic;
+
   public
     { public declarations }
   end;
@@ -86,120 +91,148 @@ implementation
 { TMainForm }
 
 procedure TMainForm.FormCreate(Sender: TObject);
-var
-  ScalarIntegerViewFactory: TScalarIntegerViewFactory;
-  ScalarFloatViewFactory: TScalarFloatViewFactory;
 begin
-  ScalarIntegerViewFactory := TScalarIntegerViewFactory.Create();
-  ScalarFloatViewFactory := TScalarFloatViewFactory.Create();
+  FBilletWeight := TIntegerValuePresenter.Create(Edit1);
+  FNumOfBillets := TIntegerValuePresenter.Create(Edit2);
+  FHeatWeight := TIntegerValuePresenter.Create(Edit3);
+  FHeatWeightLogic := THeatWeightLogic.Create(FBilletWeight.GetModel(),
+                                              FNumOfBillets.GetModel(),
+                                              FHeatWeight.GetModel());
 
-  FBarWeightController := TScalarController.Create(BarWeight, ScalarIntegerViewFactory);
-  FBarCountController := TScalarController.Create(BarCount, ScalarIntegerViewFactory);
-  FHeatWeightController := TScalarController.Create(HeatWeight, ScalarIntegerViewFactory);
+  FMetalWeight1 := TIntegerValuePresenter.Create(Edit4);
+  FMetalWeight2 := TIntegerValuePresenter.Create(Edit5);
+  FMetalWeight3 := TIntegerValuePresenter.Create(Edit6);
+  FMetalWeight4 := TIntegerValuePresenter.Create(Edit7);
+  FMetalWeight5 := TIntegerValuePresenter.Create(Edit8);
+  FMetalWeightT := TIntegerValuePresenter.Create(Edit9);
+  FMetalWeightLogic := TMetalWeightLogic.Create(FMetalWeight1.GetModel(),
+                                                FMetalWeight2.GetModel(),
+                                                FMetalWeight3.GetModel(),
+                                                FMetalWeight4.GetModel(),
+                                                FMetalWeight5.GetModel(),
+                                                FMetalWeightT.GetModel());
 
-  FMetalWeight1Controller := TScalarController.Create(MetalWeight1, ScalarIntegerViewFactory);
-  FMetalWeight2Controller := TScalarController.Create(MetalWeight2, ScalarIntegerViewFactory);
-  FMetalWeight3Controller := TScalarController.Create(MetalWeight3, ScalarIntegerViewFactory);
-  FMetalWeight4Controller := TScalarController.Create(MetalWeight4, ScalarIntegerViewFactory);
-  FMetalWeight5Controller := TScalarController.Create(MetalWeight5, ScalarIntegerViewFactory);
-  FMetalWeightController := TScalarController.Create(MetalWeight, ScalarIntegerViewFactory);
+  FNormalRate := TFloatValuePresenter.Create(Edit10, 1.0);
+  FActualRate := TFloatValuePresenter.Create(Edit11);
+  FActualRateLogic := TActualRateLogic.Create(FHeatWeight.GetModel(),
+                                              FMetalWeightT.GetModel(),
+                                              FActualRate.GetModel());
+  FDeficit := TIntegerValuePresenter.Create(Edit12);
+  FDeficitLogic := TDeficitLogic.Create(FHeatWeight.GetModel(),
+                                        FMetalWeightT.GetModel(),
+                                        FActualRate.GetModel(),
+                                        FNormalRate.GetModel(),
+                                        FDeficit.GetModel());
+end;
 
-  FNormalFlowRateController := TScalarController.Create();
-  FActualFlowRateController := TScalarController.Create(ActualFlowRate, ScalarFloatViewFactory);
-  FDeficitController := TScalarController.Create(Deficit, ScalarIntegerViewFactory);
+procedure TMainForm.Edit1Change(Sender: TObject);
+begin
+  FBilletWeight.UpdateModel();
+end;
 
-  FHeatWeightLogic := THeatWeightLogic.Create(FBarWeightController.Model,
-                                              FBarCountController.Model,
-                                              FHeatWeightController.Model);
-  FMetalWeightLogic := TMetalWeightLogic.Create(FMetalWeight1Controller.Model,
-                                                FMetalWeight2Controller.Model,
-                                                FMetalWeight3Controller.Model,
-                                                FMetalWeight4Controller.Model,
-                                                FMetalWeight5Controller.Model,
-                                                FMetalWeightController.Model);
-  FFlowRateLogic := TFlowRateLogic.Create(FHeatWeightController.Model,
-                                          FMetalWeightController.Model,
-                                          FActualFlowRateController.Model);
-  FDeficitLogic := TDeficitLogic.Create(FHeatWeightController.Model,
-                                        FMetalWeightController.Model,
-                                        FNormalFlowRateController.Model,
-                                        FActualFlowRateController.Model,
-                                        FDeficitController.Model);
+procedure TMainForm.Edit10Change(Sender: TObject);
+begin
+  FNormalRate.UpdateModel();
+end;
 
-  ScalarFloatViewFactory.Free();
-  ScalarIntegerViewFactory.Free();
+procedure TMainForm.Button1Click(Sender: TObject);
+begin
+  Edit4.Clear();
+  Edit5.Clear();
+  Edit6.Clear();
+  Edit7.Clear();
+  Edit8.Clear();
+end;
+
+procedure TMainForm.ChangeMode(Sender: TObject);
+begin
+  Edit2.Clear();
+end;
+
+procedure TMainForm.ClearOnClick(Sender: TObject);
+var
+  TextBox: TEdit;
+begin
+  TextBox := TEdit(Sender);
+
+  if not TextBox.ReadOnly then
+    TextBox.Clear();
+end;
+
+procedure TMainForm.Edit2Change(Sender: TObject);
+begin
+  FNumOfBillets.UpdateModel();
+end;
+
+procedure TMainForm.Edit3Change(Sender: TObject);
+begin
+  FHeatWeight.UpdateModel();
+end;
+
+procedure TMainForm.Edit4Change(Sender: TObject);
+begin
+  FMetalWeight1.UpdateModel();
+end;
+
+procedure TMainForm.Edit5Change(Sender: TObject);
+begin
+  FMetalWeight2.UpdateModel();
+end;
+
+procedure TMainForm.Edit6Change(Sender: TObject);
+begin
+  FMetalWeight3.UpdateModel();
+end;
+
+procedure TMainForm.Edit7Change(Sender: TObject);
+begin
+  FMetalWeight4.UpdateModel();
+end;
+
+procedure TMainForm.Edit8Change(Sender: TObject);
+begin
+  FMetalWeight5.UpdateModel();
 end;
 
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   FHeatWeightLogic.Free();
   FMetalWeightLogic.Free();
-  FFlowRateLogic.Free();
+  FActualRateLogic.Free();
   FDeficitLogic.Free();
 
-  FHeatWeightController.Free();
-  FBarCountController.Free();
-  FBarWeightController.Free();
+  FBilletWeight.Free();
+  FNumOfBillets.Free();
+  FHeatWeight.Free();
 
-  FMetalWeightController.Free();
-  FMetalWeight5Controller.Free();
-  FMetalWeight4Controller.Free();
-  FMetalWeight3Controller.Free();
-  FMetalWeight2Controller.Free();
-  FMetalWeight1Controller.Free();
+  FMetalWeight1.Free();
+  FMetalWeight2.Free();
+  FMetalWeight3.Free();
+  FMetalWeight4.Free();
+  FMetalWeight5.Free();
+  FMetalWeightT.Free();
 
-  FDeficitController.Free();
-  FActualFlowRateController.Free();
-  FNormalFlowRateController.Free();
+  FNormalRate.Free();
+  FActualRate.Free();
+  FDeficit.Free();
 end;
 
-procedure TMainForm.BarWeightChange(Sender: TObject);
+procedure TMainForm.FormShow(Sender: TObject);
 begin
-  FBarWeightController.SetValue(TEdit(Sender).Text);
-end;
+  FBilletWeight.Update();
+  FNumOfBillets.Update();
+  FHeatWeight.Update();
 
-procedure TMainForm.BarCountChange(Sender: TObject);
-begin
-  FBarCountController.SetValue(TEdit(Sender).Text);
-end;
+  FMetalWeight1.Update();
+  FMetalWeight2.Update();
+  FMetalWeight3.Update();
+  FMetalWeight4.Update();
+  FMetalWeight5.Update();
+  FMetalWeightT.Update();
 
-procedure TMainForm.MetalWeight1Change(Sender: TObject);
-begin
-  FMetalWeight1Controller.SetValue(TEdit(Sender).Text);
-end;
-
-procedure TMainForm.MetalWeight2Change(Sender: TObject);
-begin
-  FMetalWeight2Controller.SetValue(TEdit(Sender).Text);
-end;
-
-procedure TMainForm.MetalWeight3Change(Sender: TObject);
-begin
-  FMetalWeight3Controller.SetValue(TEdit(Sender).Text);
-end;
-
-procedure TMainForm.MetalWeight4Change(Sender: TObject);
-begin
-  FMetalWeight4Controller.SetValue(TEdit(Sender).Text);
-end;
-
-procedure TMainForm.MetalWeight5Change(Sender: TObject);
-begin
-  FMetalWeight5Controller.SetValue(TEdit(Sender).Text);
-end;
-
-procedure TMainForm.NormalFlowRateChange(Sender: TObject);
-begin
-  FNormalFlowRateController.SetValue(TFloatSpinEdit(Sender).Value);
-end;
-
-procedure TMainForm.ResetWeightClick(Sender: TObject);
-begin
-  FMetalWeight1Controller.Reset();
-  FMetalWeight2Controller.Reset();
-  FMetalWeight3Controller.Reset();
-  FMetalWeight4Controller.Reset();
-  FMetalWeight5Controller.Reset();
+  FNormalRate.Update();
+  FActualRate.Update();
+  FDeficit.Update();
 end;
 
 end.

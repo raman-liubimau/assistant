@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 424
+  Left = 400
   Height = 348
-  Top = 313
+  Top = 248
   Width = 220
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
@@ -26,7 +26,7 @@ object MainForm: TMainForm
       Left = 13
       Height = 15
       Top = 12
-      Width = 104
+      Width = 120
       Caption = 'Масса заготовки:'
       ParentColor = False
     end
@@ -34,7 +34,7 @@ object MainForm: TMainForm
       Left = 13
       Height = 15
       Top = 36
-      Width = 109
+      Width = 121
       Caption = 'Кол-во заготовок:'
       ParentColor = False
     end
@@ -42,7 +42,7 @@ object MainForm: TMainForm
       Left = 13
       Height = 15
       Top = 60
-      Width = 87
+      Width = 100
       Caption = 'Масса плавки:'
       ParentColor = False
     end
@@ -91,7 +91,7 @@ object MainForm: TMainForm
       Left = 13
       Height = 15
       Top = 12
-      Width = 11
+      Width = 12
       Caption = '1:'
       ParentColor = False
     end
@@ -99,7 +99,7 @@ object MainForm: TMainForm
       Left = 13
       Height = 15
       Top = 36
-      Width = 11
+      Width = 12
       Caption = '2:'
       ParentColor = False
     end
@@ -107,7 +107,7 @@ object MainForm: TMainForm
       Left = 13
       Height = 15
       Top = 60
-      Width = 11
+      Width = 12
       Caption = '3:'
       ParentColor = False
     end
@@ -115,7 +115,7 @@ object MainForm: TMainForm
       Left = 125
       Height = 15
       Top = 12
-      Width = 11
+      Width = 12
       Caption = '4:'
       ParentColor = False
     end
@@ -123,7 +123,7 @@ object MainForm: TMainForm
       Left = 125
       Height = 15
       Top = 36
-      Width = 11
+      Width = 12
       Caption = '5:'
       ParentColor = False
     end
@@ -140,7 +140,7 @@ object MainForm: TMainForm
       Left = 13
       Height = 15
       Top = 92
-      Width = 85
+      Width = 95
       Caption = 'Общая масса:'
       ParentColor = False
     end
@@ -199,6 +199,7 @@ object MainForm: TMainForm
       Height = 23
       Top = 84
       Width = 64
+      Color = clForm
       ReadOnly = True
       TabOrder = 6
       Text = 'Edit9'
@@ -218,7 +219,7 @@ object MainForm: TMainForm
       Left = 13
       Height = 15
       Top = 11
-      Width = 85
+      Width = 92
       Caption = 'Нормальный:'
       ParentColor = False
     end
@@ -226,7 +227,7 @@ object MainForm: TMainForm
       Left = 13
       Height = 15
       Top = 36
-      Width = 83
+      Width = 97
       Caption = 'Фактический:'
       ParentColor = False
     end
@@ -234,7 +235,7 @@ object MainForm: TMainForm
       Left = 13
       Height = 15
       Top = 60
-      Width = 57
+      Width = 66
       Caption = 'Дефицит:'
       ParentColor = False
     end
@@ -253,6 +254,7 @@ object MainForm: TMainForm
       Height = 23
       Top = 28
       Width = 64
+      Color = clForm
       ReadOnly = True
       TabOrder = 1
       Text = 'Edit11'
@@ -262,6 +264,7 @@ object MainForm: TMainForm
       Height = 23
       Top = 52
       Width = 64
+      Color = clForm
       ReadOnly = True
       TabOrder = 2
       Text = 'Edit12'

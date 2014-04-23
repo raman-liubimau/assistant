@@ -201,7 +201,7 @@ begin
   NormalRate := TCustomValue(Dependencies.Items[3]).Value;
 
   if (NormalRate > 1.0) and (NormalRate < 2.0) then
-    if not (HeatWeight = 0.0) then
+    if not ((HeatWeight = 0.0) or (HeatWeight < MetalWeight)) then
       if (ActualRate > NormalRate) or (ActualRate = 0.0) then
       begin
         SetValue(TargetObject, Round(HeatWeight / NormalRate - MetalWeight));

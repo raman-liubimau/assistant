@@ -146,7 +146,10 @@ end;
 
 procedure TMainForm.ChangeMode(Sender: TObject);
 begin
-  Edit2.Clear();
+  if not (Length(Edit2.Text) = 0) then
+    ClearOnClick(Edit2)
+  else
+    ClearOnClick(Edit3)
 end;
 
 procedure TMainForm.ClearOnClick(Sender: TObject);
